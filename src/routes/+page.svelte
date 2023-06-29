@@ -1,18 +1,22 @@
 <script lang="ts">
     import { createClient, SupabaseClient } from '@supabase/supabase-js';
     import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY } from '$env/static/public'
-    console.log('VITE_SUPABASE_URL', PUBLIC_SUPABASE_URL)
-    //const VITE_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-    //const VITE_SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY
     import type { User } from '@supabase/supabase-js';
     import { writable } from 'svelte/store';
+	import { onMount } from 'svelte'
     const supabase: SupabaseClient = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY);
     const user: any = writable<User | null>(null);
     let email = '';
     let password = '';
-
+    onMount(async () => {
+        const { data, error } = await supabase.rpc('get_my_other_claims');
+        console.log('get_my_other_claims', data, error);
+        const { data: data2, error: error2 } = await supabase.rpc('get_my_other_claims2');
+        console.log('get_my_other_claims2', data2, error2);
+        const { data: data3, error: error3 } = await supabase.rpc('get_my_claims');
+        console.log('get_my_claims', data3, error3);
+    });
     supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('onAuthStateChange', event, session)
         user.set(session?.user ?? null);
     });  
 
@@ -67,8 +71,5 @@
     </form>
 {/if}
 
-<pre>
-
-    {JSON.stringify($user, null, 2)}
-
-</pre>
+<br/><br/>$user:
+<pre>{JSON.stringify($user, null, 2)}</pre>
