@@ -11,10 +11,10 @@
     onMount(async () => {
         const { data, error } = await supabase.rpc('get_my_other_claims');
         console.log('get_my_other_claims', data, error);
-        const { data: data2, error: error2 } = await supabase.rpc('get_my_other_claims2');
-        console.log('get_my_other_claims2', data2, error2);
-        const { data: data3, error: error3 } = await supabase.rpc('get_my_claims');
-        console.log('get_my_claims', data3, error3);
+        // const { data: data2, error: error2 } = await supabase.rpc('get_my_other_claims2');
+        // console.log('get_my_other_claims2', data2, error2);
+        // const { data: data3, error: error3 } = await supabase.rpc('get_my_claims');
+        // console.log('get_my_claims', data3, error3);
     });
     supabase.auth.onAuthStateChange(async (event, session) => {
         user.set(session?.user ?? null);
