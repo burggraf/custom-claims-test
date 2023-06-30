@@ -8,16 +8,25 @@
     const user: any = writable<User | null>(null);
     let email = '';
     let password = '';
+    let claims: any = null;
     onMount(async () => {
-        const { data, error } = await supabase.rpc('get_my_other_claims');
-        console.log('get_my_other_claims', data, error);
+        // const { data, error } = await supabase.rpc('get_my_other_claims');
+        // console.log('get_my_other_claims', data, error);
+
         // const { data: data2, error: error2 } = await supabase.rpc('get_my_other_claims2');
         // console.log('get_my_other_claims2', data2, error2);
         // const { data: data3, error: error3 } = await supabase.rpc('get_my_claims');
         // console.log('get_my_claims', data3, error3);
     });
+    const set_claims = async () => {
+        const { data, error } = await supabase.rpc('get_my_other_claims');
+        if (error) { console.error('set_claims error', error)}
+        else {claims = data;}
+    }
     supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('onAuthStateChange', event, session)
         user.set(session?.user ?? null);
+        set_claims();
     });  
 
     const signin = async () => {
@@ -39,7 +48,6 @@
 <h1>Test Custom Claims</h1>
 {#if $user}
     <p>Logged in as {$user.email}</p>
-    <p>Custom claims: {$user.claims}</p>
     <button on:click={signout}>Logout</button>
 {:else}
     <h2>Login</h2>
@@ -71,5 +79,5 @@
     </form>
 {/if}
 
-<br/><br/>$user:
-<pre>{JSON.stringify($user, null, 2)}</pre>
+<br/><br/>claims:<pre>{JSON.stringify(claims, null, 2)}</pre>
+$user:<pre>{JSON.stringify($user, null, 2)}</pre>
