@@ -26,17 +26,11 @@ CREATE OR REPLACE FUNCTION is_claims_admin() RETURNS "bool"
   END;
 $$;
 
-CREATE OR REPLACE FUNCTION get_my_other_claims2() RETURNS "jsonb"
-    LANGUAGE "sql" STABLE
-    AS $$
-  select 
-  	coalesce(current_setting('request.jwt.other2', true), '{}')::JSONB
-$$;
 CREATE OR REPLACE FUNCTION get_my_other_claims() RETURNS "jsonb"
     LANGUAGE "sql" STABLE
     AS $$
   select 
-  	coalesce(current_setting('request.jwt.other', true), '{}')::JSONB
+  	coalesce(current_setting('request.claims', true), '{}')::JSONB
 $$;
 
 CREATE OR REPLACE FUNCTION get_my_claims() RETURNS "jsonb"

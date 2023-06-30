@@ -25,3 +25,10 @@ $$;
 alter role authenticator 
     set pgrst.db_pre_request to 'public.db_pre_request';
 NOTIFY pgrst, 'reload config';
+CREATE OR REPLACE FUNCTION claims() RETURNS "jsonb"
+    LANGUAGE "sql" STABLE
+    AS $$
+  select 
+  	coalesce(current_setting('request.claims', true), '{}')::JSONB
+$$;
+
