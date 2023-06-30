@@ -21,12 +21,12 @@
     const set_claims = async () => {
         const { data, error } = await supabase.rpc('get_my_other_claims');
         if (error) { console.error('set_claims error', error)}
-        else {claims = data;}
+        else {claims = data; console.log('claims', claims);}
     }
     supabase.auth.onAuthStateChange(async (event, session) => {
         console.log('onAuthStateChange', event, session)
         user.set(session?.user ?? null);
-        set_claims();
+        set_claims();        
     });  
 
     const signin = async () => {
