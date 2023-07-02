@@ -4,11 +4,14 @@
     import type { User } from '@supabase/supabase-js';
     import { writable } from 'svelte/store';
 	import { onMount } from 'svelte'
-    const supabase: SupabaseClient = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY);
+    const supabase: SupabaseClient = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY,
+    //{global: { headers: { 'x-my-custom-header': 'my-app-name2' }}}
+    );
     const user: any = writable<User | null>(null);
     let email = '';
     let password = '';
     let claims: any = null;
+    let headers: any = null;
     onMount(async () => {
         // const { data, error } = await supabase.rpc('get_my_other_claims');
         // console.log('get_my_other_claims', data, error);
@@ -17,6 +20,10 @@
         // console.log('get_my_other_claims2', data2, error2);
         // const { data: data3, error: error3 } = await supabase.rpc('get_my_claims');
         // console.log('get_my_claims', data3, error3);
+        const { data, error } = await supabase.rpc('headers');
+        if (error) { console.error('headers() error', error)}
+        else {headers = data; console.log('headers', data);}
+
     });
     const set_claims = async () => {
         const { data, error } = await supabase.rpc('get_my_other_claims');
@@ -81,3 +88,5 @@
 
 <br/><br/>claims:<pre>{JSON.stringify(claims, null, 2)}</pre>
 $user:<pre>{JSON.stringify($user, null, 2)}</pre>
+headers:<pre>{JSON.stringify(headers, null, 2)}</pre>
+

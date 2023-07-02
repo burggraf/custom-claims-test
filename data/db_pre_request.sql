@@ -13,8 +13,8 @@ $$
 
     -- ******************************** CUSTOM CLAIMS ********************************
     -- get user_role from the roles table and add it to the claims
-    select role from roles where uid = ((claims::JSONB)->>'sub')::uuid into user_role;
-    claims := claims || jsonb_build_object('user_role',user_role);
+    -- select role from roles where uid = ((claims::JSONB)->>'sub')::uuid into user_role;
+    -- claims := claims || jsonb_build_object('user_role',user_role);
     -- *******************************************************************************
 
     PERFORM set_config('request.jwt.other'::text, claims::text, false /* is_local */);

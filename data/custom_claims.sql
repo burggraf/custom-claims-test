@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION get_my_other_claims() RETURNS "jsonb"
     LANGUAGE "sql" STABLE
     AS $$
   select 
-  	coalesce(current_setting('request.claims', true), '{}')::JSONB
+  	coalesce(current_setting('request.jwt.other', true), '{}')::JSONB
 $$;
 
 CREATE OR REPLACE FUNCTION get_my_claims() RETURNS "jsonb"
