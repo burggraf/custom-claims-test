@@ -26,8 +26,8 @@
 
     });
     const set_claims = async () => {
-        const { data, error } = await supabase.rpc('get_my_other_claims');
-        if (error) { console.error('set_claims error', error)}
+        const { data, error } = await supabase.rpc('req');
+        if (error) { console.error('set_claims error (req)', error)}
         else {claims = data; console.log('claims', claims);}
     }
     supabase.auth.onAuthStateChange(async (event, session) => {

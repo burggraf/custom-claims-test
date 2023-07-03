@@ -4,9 +4,12 @@ $$
     DECLARE 
       claims JSONB;
       user_role TEXT;
+      headers JSONB;
     BEGIN
     -- get the claims from the JWT 
     select coalesce(current_setting('request.jwt.claims', true),'{}') into claims;
+    select coalesce(current_setting('request.headers', true), '{}') into headers;
+    claims := claims || jsonb_build_object('headers',headers);
     -- convert the exp claim to a timestamp with time zone (UTC)
     -- claims := claims || 
     --     jsonb_build_object('expires',to_timestamp(coalesce((claims::JSONB)->'exp','0')::numeric));
@@ -17,7 +20,7 @@ $$
     -- claims := claims || jsonb_build_object('user_role',user_role);
     -- *******************************************************************************
 
-    PERFORM set_config('request.jwt.other'::text, claims::text, false /* is_local */);
+    PERFORM set_config('request.claims'::text, claims::text, false /* is_local */);
 
     return claims;
     END;
@@ -31,4 +34,9 @@ CREATE OR REPLACE FUNCTION claims() RETURNS "jsonb"
   select 
   	coalesce(current_setting('request.claims', true), '{}')::JSONB
 $$;
-
+CREATE OR REPLACE FUNCTION req() RETURNS "jsonb"
+    LANGUAGE "sql" STABLE
+    AS $$
+  select 
+  	coalesce(current_setting('request.claims', true), '{}')::JSONB
+$$;
