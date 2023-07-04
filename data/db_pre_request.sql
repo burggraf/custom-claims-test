@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION db_pre_request() RETURNS JSONB
 $$
     DECLARE 
       claims JSONB;
-      -- user_role TEXT;
+      user_role TEXT;
       headers JSONB;
       mymedia_titles TEXT;
     BEGIN
@@ -22,7 +22,7 @@ $$
 
     -- get list of titles owned by current user
     SELECT 
-      '''' || array_to_string(array_agg(tconst::text), ''',''') || ''''
+      array_to_string(array_agg(tconst), ',')
     FROM 
       mymedia 
     WHERE 

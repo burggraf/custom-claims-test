@@ -1,6 +1,6 @@
 --title select:
 
-tconst = ANY (string_to_array(replace(coalesce(req() ->> 'mymedia_titles',''), '''', ''), ','::text))
+tconst = ANY (string_to_array(req() ->> 'mymedia_titles', ','))
 
 -- this is a failure (times out):
 /*
