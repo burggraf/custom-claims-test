@@ -21,6 +21,8 @@
 	"type": "module",
 	"dependencies": {
 		"@esbuild/darwin-arm64": "^0.18.10",
-		"@supabase/supabase-js": "^2.26.0"
+		"@supabase/supabase-js": "^2.26.0",
+		"@sveltejs/adapter-static": "^2.0.2",
+		"svelte-preprocess": "^5.0.4"
 	}
 }
