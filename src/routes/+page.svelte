@@ -12,6 +12,7 @@
     let password = '';
     let claims: any = null;
     let headers: any = null;
+    let titles: any = [];
     onMount(async () => {
         // const { data, error } = await supabase.rpc('get_my_other_claims');
         // console.log('get_my_other_claims', data, error);
@@ -25,6 +26,12 @@
         else {headers = data; console.log('headers', data);}
 
     });
+    const set_titles = async () => {
+        const { data: titles_result, error: titles_error } = 
+            await supabase.from('title').select('*');
+        if (titles_error) { console.error('titles error', titles_error)}
+        else {console.log('titles', titles); titles = titles_result;}
+    }
     const set_claims = async () => {
         const { data, error } = await supabase.rpc('req');
         if (error) { console.error('set_claims error (req)', error)}
@@ -33,7 +40,8 @@
     supabase.auth.onAuthStateChange(async (event, session) => {
         console.log('onAuthStateChange', event, session)
         user.set(session?.user ?? null);
-        set_claims();        
+        set_claims();  
+        set_titles();      
     });  
 
     const signin = async () => {
@@ -89,4 +97,5 @@
 <br/><br/>claims:<pre>{JSON.stringify(claims, null, 2)}</pre>
 $user:<pre>{JSON.stringify($user, null, 2)}</pre>
 headers:<pre>{JSON.stringify(headers, null, 2)}</pre>
+titles:<pre>{JSON.stringify(titles, null, 2)}</pre>
 
