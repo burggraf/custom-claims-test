@@ -3,8 +3,9 @@ CREATE OR REPLACE FUNCTION db_pre_request() RETURNS JSONB
 $$
     DECLARE 
       claims JSONB;
-      user_role TEXT;
+      -- user_role TEXT;
       headers JSONB;
+      mymedia_titles TEXT;
     BEGIN
     -- get the claims from the JWT 
     select coalesce(current_setting('request.jwt.claims', true),'{}') into claims;
@@ -18,6 +19,16 @@ $$
     -- get user_role from the roles table and add it to the claims
     -- select role from roles where uid = ((claims::JSONB)->>'sub')::uuid into user_role;
     -- claims := claims || jsonb_build_object('user_role',user_role);
+
+    -- get list of titles owned by current user
+    SELECT 
+      '''' || array_to_string(array_agg(tconst::text), ''',''') || ''''
+    FROM 
+      mymedia 
+    WHERE 
+      mymedia.owner = (claims->>'sub')::uuid into mymedia_titles;
+
+    claims := claims || jsonb_build_object('mymedia_titles',mymedia_titles);
     -- *******************************************************************************
 
     PERFORM set_config('request.claims'::text, claims::text, false /* is_local */);
