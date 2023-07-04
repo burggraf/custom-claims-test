@@ -1,2 +1,2 @@
-wrangler pages deploy build
+npm run build && wrangler pages deploy build
 
