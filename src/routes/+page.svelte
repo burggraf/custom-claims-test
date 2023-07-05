@@ -1,26 +1,14 @@
 <script lang="ts">
-    import { createClient, SupabaseClient } from '@supabase/supabase-js';
-    import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY } from '$env/static/public'
+    import { supabase } from '../lib/supabase';
     import type { User } from '@supabase/supabase-js';
-    import { writable } from 'svelte/store';
+    import { user, signin, signup, signout } from '../lib/auth';
 	import { onMount } from 'svelte'
-    const supabase: SupabaseClient = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_KEY,
-    //{global: { headers: { 'x-my-custom-header': 'my-app-name2' }}}
-    );
-    const user: any = writable<User | null>(null);
     let email = '';
     let password = '';
     let claims: any = null;
     let headers: any = null;
     let titles: any = [];
     onMount(async () => {
-        // const { data, error } = await supabase.rpc('get_my_other_claims');
-        // console.log('get_my_other_claims', data, error);
-
-        // const { data: data2, error: error2 } = await supabase.rpc('get_my_other_claims2');
-        // console.log('get_my_other_claims2', data2, error2);
-        // const { data: data3, error: error3 } = await supabase.rpc('get_my_claims');
-        // console.log('get_my_claims', data3, error3);
         const { data, error } = await supabase.rpc('headers');
         if (error) { console.error('headers() error', error)}
         else {headers = data; console.log('headers', data);}
@@ -37,28 +25,14 @@
         if (error) { console.error('set_claims error (req)', error)}
         else {claims = data; console.log('claims', claims);}
     }
-    supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('onAuthStateChange', event, session)
-        user.set(session?.user ?? null);
-        set_claims();  
-        set_titles();      
-    });  
+    user.subscribe((value: User) => {
+        console.log('user', value);
+        // if (value) {
+            set_claims();
+            set_titles();
+        // }
+    });
 
-    const signin = async () => {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        })
-    }
-    const signup = async () => {
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-        })
-    }
-    const signout = async () => {
-        const { error } = await supabase.auth.signOut();
-    }
 </script>
 <h1>Test Custom Claims</h1>
 {#if $user}
@@ -82,12 +56,12 @@
         </tr>
         <tr>
             <td>
-                <button on:click={signin}>Login</button>
+                <button on:click={()=>{signin(email,password)}}>Login</button>
             </td>
         </tr>
         <tr>
             <td>
-                <button on:click={signup}>Sign Up</button>
+                <button on:click={()=>{signup(email,password)}}>Sign Up</button>
             </td>
         </tr>
     </table>
